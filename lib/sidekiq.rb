@@ -61,10 +61,15 @@ module Sidekiq
     defined?(Sidekiq::CLI)
   end
 
-  def self.redis(&block)
+  def self.redis(conn = nil, &block)
     raise ArgumentError, "requires a block" if !block
-    @redis ||= Sidekiq::RedisConnection.create(@hash || {})
-    @redis.with(&block)
+
+    if conn
+      conn.with(&block)
+    else
+      @redis ||= Sidekiq::RedisConnection.create(@hash || {})
+      @redis.with(&block)
+    end
   end
 
   def self.redis=(hash)
