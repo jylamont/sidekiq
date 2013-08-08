@@ -92,7 +92,7 @@ module Sidekiq
 
       def raw_push(payloads)
         pushed = false
-        Sidekiq.redis(payloads['conn']) do |conn|
+        Sidekiq.redis(payloads.first['conn']) do |conn|
           if payloads.first['at']
             pushed = conn.zadd('schedule', payloads.map do |hash|
               at = hash.delete('at').to_s
